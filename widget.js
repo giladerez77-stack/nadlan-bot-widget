@@ -14,7 +14,11 @@
  */
 (function () {
   'use strict';
-  var s = document.currentScript;
+  // document.currentScript is the reliable path for a static <script> tag (WordPress).
+  // When loaded async (next/script, GTM, etc.) currentScript is null at run time, so
+  // fall back to locating our own tag by its data attributes. Makes the widget robust
+  // to any async/deferred loader, not just Next.js.
+  var s = document.currentScript || document.querySelector('script[data-key][data-endpoint]');
   var KEY = s && s.getAttribute('data-key');
   var SURFACE = (s && s.getAttribute('data-surface')) || 'site';
   var ENDPOINT = s && s.getAttribute('data-endpoint');
