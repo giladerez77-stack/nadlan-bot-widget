@@ -179,24 +179,52 @@
   teaser.addEventListener('click', openPanel);
   teaser.querySelector('#nb-tx').addEventListener('click', function (e) { e.stopPropagation(); hideTeaser(); });
 
+  // Sends the message and consumes an SSE stream: the reply text types in live as the
+  // bot generates it, then a final event carries the authoritative reply + conversation_id.
   function send(text) {
     text = String(text || '').trim(); if (!text) return;
     var chips = log.querySelector('#nb-chips'); if (chips) chips.remove();
     add('user', text);
     var pending = typing();
+    var streamed = '';
+    function handle(obj) {
+      if (obj.delta) {
+        if (!streamed) pending.textContent = '';
+        streamed += obj.delta;
+        pending.textContent = streamed;
+        log.scrollTop = log.scrollHeight;
+      } else if (obj.final) {
+        if (obj.final.conversation_id) { conversationId = obj.final.conversation_id; localStorage.setItem(LS_CONV, conversationId); }
+        pending.textContent = obj.final.reply || streamed || 'מצטער, אירעה תקלה.';
+        log.scrollTop = log.scrollHeight;
+      } else if (obj.error) {
+        pending.textContent = obj.error === 'rate_limited' ? 'רגע אחד, נסו שוב עוד רגע.' : 'מצטער, אירעה תקלה.';
+      }
+    }
     fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ public_key: KEY, surface: SURFACE, message: text, conversation_id: conversationId, visitor_id: visitor })
+      body: JSON.stringify({ public_key: KEY, surface: SURFACE, message: text, conversation_id: conversationId, visitor_id: visitor, stream: true })
     }).then(function (r) {
-      if (r.status === 429) { pending.textContent = 'רגע אחד, נסו שוב עוד רגע.'; return null; }
-      return r.json();
-    }).then(function (data) {
-      if (!data) return;
-      if (data.conversation_id) { conversationId = data.conversation_id; localStorage.setItem(LS_CONV, conversationId); }
-      pending.textContent = data.reply || 'מצטער, אירעה תקלה.';
-      log.scrollTop = log.scrollHeight;
-    }).catch(function () { pending.textContent = 'מצטער, אירעה תקלה. נסו שוב.'; });
+      if (!r.ok || !r.body) throw new Error('bad response');
+      var reader = r.body.getReader(), dec = new TextDecoder(), buf = '';
+      function pump() {
+        return reader.read().then(function (res) {
+          if (res.done) return;
+          buf += dec.decode(res.value, { stream: true });
+          var parts = buf.split('\n\n'); buf = parts.pop();
+          parts.forEach(function (block) {
+            var line = null;
+            block.split('\n').forEach(function (l) { if (l.indexOf('data:') === 0) line = l.slice(5).trim(); });
+            if (!line) return;
+            var obj; try { obj = JSON.parse(line); } catch (e) { return; }
+            handle(obj);
+          });
+          return pump();
+        });
+      }
+      return pump();
+    }).catch(function () { if (!streamed) pending.textContent = 'מצטער, אירעה תקלה. נסו שוב.'; });
   }
 
   form.addEventListener('submit', function (e) {
