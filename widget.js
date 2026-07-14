@@ -131,10 +131,10 @@
     log.appendChild(wrap); log.scrollTop = log.scrollHeight;
   }
 
-  // static opening - no LLM. Light greeting + quick-reply chips. The self-intro is
-  // carried by the teaser and by the bot's own first reply, so we don't duplicate it here.
+  // static opening - no LLM. IDENTICAL to the teaser (one consistent self-intro), then
+  // the quick-reply chips. The bot's opening rule no longer re-introduces (widget owns it).
   function openingMessage() {
-    add('bot', greeting() + '! במה אפשר לעזור? בחרו מה הכי מתאים, או פשוט כתבו לי:');
+    add('bot', greeting() + ', ' + INTRO + ' במה אוכל לעזור?');
     renderChips();
   }
 
