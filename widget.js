@@ -44,20 +44,32 @@
   }
   // Per-surface identity. Same public sales bot, a different face per surface:
   // site = Gilad's virtual assistant; academy = the learning advisor. Extend later.
+  // Per-surface identity + quick-reply chips. Same public sales bot, a different
+  // face + intent set per surface: site = Gilad's assistant (buy/sell/learn);
+  // academy = the learning advisor (learning-path chips). chip label -> first message.
   var IDENTITY = {
-    site:    { intro: 'אני העוזר הווירטואלי של גלעד ארז, מייסד השיטה.', name: 'העוזר של גלעד ארז', sub: 'מייסד השיטה', avatar: 'גא' },
-    academy: { intro: 'אני היועץ הלימודי של נדל״ן ישראלי.',            name: 'היועץ הלימודי',       sub: 'נדל״ן ישראלי', avatar: 'יל' }
+    site: {
+      intro: 'אני העוזר הווירטואלי של גלעד ארז, מייסד השיטה.', name: 'העוזר של גלעד ארז', sub: 'מייסד השיטה', avatar: 'גא',
+      chips: [
+        { label: 'קונה', msg: 'אני רוצה לקנות נכס' },
+        { label: 'מוכר', msg: 'אני רוצה למכור נכס' },
+        { label: 'ללמוד', msg: 'אני רוצה ללמוד על נדל"ן' },
+        { label: 'שאלה', msg: 'יש לי שאלה' }
+      ]
+    },
+    academy: {
+      intro: 'אני היועץ הלימודי של נדל״ן ישראלי.', name: 'היועץ הלימודי', sub: 'נדל״ן ישראלי', avatar: 'יל',
+      chips: [
+        { label: 'ידע כללי', msg: 'אני רוצה ידע כללי בנדל״ן' },
+        { label: 'למידה + יישום', msg: 'אני רוצה ללמוד וגם ליישם בפועל' },
+        { label: 'קורס מקצועי', msg: 'אני רוצה לעסוק בנדל״ן מקצועית' },
+        { label: 'שאלה', msg: 'יש לי שאלה' }
+      ]
+    }
   };
   var ID = IDENTITY[SURFACE] || IDENTITY.site;
   var INTRO = ID.intro;
-
-  // quick-reply chips shown on open. label -> first message sent to the bot.
-  var CHIPS = [
-    { label: 'קונה', msg: 'אני רוצה לקנות נכס' },
-    { label: 'מוכר', msg: 'אני רוצה למכור נכס' },
-    { label: 'ללמוד', msg: 'אני רוצה ללמוד על נדל"ן' },
-    { label: 'שאלה', msg: 'יש לי שאלה' }
-  ];
+  var CHIPS = ID.chips;
 
   var css = [
     '#nb-bubble{position:fixed;bottom:20px;right:20px;width:60px;height:60px;border-radius:50%;background:' + BRAND + ';color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 20px rgba(41,161,211,.45);z-index:2147483000;transition:transform .15s ease}',
@@ -91,7 +103,9 @@
     '#nb-form{display:flex;border-top:1px solid #e4e9ee;background:#fff}',
     '#nb-input{flex:1;border:0;padding:13px;font-size:14px;outline:none;font-family:inherit;background:transparent}',
     '#nb-send{border:0;background:' + BRAND + ';color:#fff;padding:0 18px;cursor:pointer;font-size:14px;font-weight:600}',
-    '#nb-send:hover{background:' + BRAND_DK + '}'
+    '#nb-send:hover{background:' + BRAND_DK + '}',
+    // mobile: keep the panel contained (not full-screen) so the page stays visible behind it
+    '@media (max-width:480px){#nb-panel{width:calc(100vw - 20px);right:10px;bottom:82px;height:70vh;max-height:70vh}#nb-teaser{right:10px;width:calc(100vw - 90px)}}'
   ].join('\n');
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
