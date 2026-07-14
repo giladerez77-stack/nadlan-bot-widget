@@ -42,7 +42,14 @@
     if (h >= 18 && h < 22) return 'ערב טוב';
     return 'לילה טוב';
   }
-  var INTRO = 'אני העוזר הווירטואלי של גלעד ארז, מייסד השיטה.';
+  // Per-surface identity. Same public sales bot, a different face per surface:
+  // site = Gilad's virtual assistant; academy = the learning advisor. Extend later.
+  var IDENTITY = {
+    site:    { intro: 'אני העוזר הווירטואלי של גלעד ארז, מייסד השיטה.', name: 'העוזר של גלעד ארז', sub: 'מייסד השיטה', avatar: 'גא' },
+    academy: { intro: 'אני היועץ הלימודי של נדל״ן ישראלי.',            name: 'היועץ הלימודי',       sub: 'נדל״ן ישראלי', avatar: 'יל' }
+  };
+  var ID = IDENTITY[SURFACE] || IDENTITY.site;
+  var INTRO = ID.intro;
 
   // quick-reply chips shown on open. label -> first message sent to the bot.
   var CHIPS = [
@@ -97,7 +104,7 @@
 
   var panel = document.createElement('div'); panel.id = 'nb-panel';
   panel.innerHTML =
-    '<div id="nb-head"><div id="nb-av">גא</div><div id="nb-htxt"><b>העוזר של גלעד ארז</b><span>מייסד השיטה</span></div><button id="nb-close" type="button" aria-label="סגירה">×</button></div>' +
+    '<div id="nb-head"><div id="nb-av">' + ID.avatar + '</div><div id="nb-htxt"><b>' + ID.name + '</b><span>' + ID.sub + '</span></div><button id="nb-close" type="button" aria-label="סגירה">×</button></div>' +
     '<div id="nb-log"></div>' +
     '<form id="nb-form"><input id="nb-input" placeholder="כתבו הודעה..." autocomplete="off"><button id="nb-send" type="submit">שלח</button></form>';
 
