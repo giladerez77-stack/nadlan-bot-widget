@@ -1,0 +1,17 @@
+<!doctype html><html lang="he" dir="rtl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>async load test (next/script simulation)</title>
+<style>body{font-family:system-ui,Arial;margin:0;padding:40px;color:#222}h1{color:#29A1D3}</style></head>
+<body><h1>בדיקת טעינה אסינכרונית , סימולציית next/script</h1>
+<p>הווידג'ט מוזרק דרך createElement+appendChild (currentScript=null). אם הבועה מופיעה, ה-fallback עובד.</p>
+<script>
+  // simulate next/script: a script-created (not parser-inserted) tag -> currentScript is null when it runs
+  var sc = document.createElement('script');
+  sc.src = './widget.js?async=1';
+  sc.setAttribute('data-key','nadlanisraeli');
+  sc.setAttribute('data-surface','academy');
+  sc.setAttribute('data-endpoint','https://qrprzagvoyqngahjmrxl.supabase.co/functions/v1/bot');
+  document.body.appendChild(sc);
+</script>
+</body></html>
