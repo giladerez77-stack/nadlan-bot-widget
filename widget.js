@@ -108,7 +108,7 @@
     // dominated the phone screen. Narrower (more side margin) + shorter, and a smaller
     // bubble, so the page stays visible behind it and the widget feels like an assistant,
     // not a takeover. Easy to fine-tune: the two numbers are width margin and height vh.
-    '@media (max-width:480px){#nb-bubble{width:52px;height:52px;bottom:16px;right:16px}#nb-bubble svg{width:26px;height:26px}#nb-panel{width:calc(100vw - 48px);right:16px;bottom:78px;height:58vh;max-height:58vh}#nb-teaser{right:16px;width:calc(100vw - 96px)}}'
+    '@media (max-width:480px){#nb-bubble{width:52px;height:52px;bottom:16px;right:16px}#nb-bubble svg{width:26px;height:26px}#nb-panel{width:calc(100vw - 56px);right:20px;bottom:76px;height:52vh;max-height:52vh}#nb-teaser{right:16px;width:calc(100vw - 96px)}}'
   ].join('\n');
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
