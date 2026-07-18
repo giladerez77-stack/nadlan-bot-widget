@@ -104,8 +104,11 @@
     '#nb-input{flex:1;border:0;padding:13px;font-size:14px;outline:none;font-family:inherit;background:transparent}',
     '#nb-send{border:0;background:' + BRAND + ';color:#fff;padding:0 18px;cursor:pointer;font-size:14px;font-weight:600}',
     '#nb-send:hover{background:' + BRAND_DK + '}',
-    // mobile: keep the panel contained (not full-screen) so the page stays visible behind it
-    '@media (max-width:480px){#nb-panel{width:calc(100vw - 20px);right:10px;bottom:82px;height:70vh;max-height:70vh}#nb-teaser{right:10px;width:calc(100vw - 90px)}}'
+    // mobile: a SMALLER contained panel (Gilad, 18/07) - it was near-full-width/70vh and
+    // dominated the phone screen. Narrower (more side margin) + shorter, and a smaller
+    // bubble, so the page stays visible behind it and the widget feels like an assistant,
+    // not a takeover. Easy to fine-tune: the two numbers are width margin and height vh.
+    '@media (max-width:480px){#nb-bubble{width:52px;height:52px;bottom:16px;right:16px}#nb-bubble svg{width:26px;height:26px}#nb-panel{width:calc(100vw - 48px);right:16px;bottom:78px;height:58vh;max-height:58vh}#nb-teaser{right:16px;width:calc(100vw - 96px)}}'
   ].join('\n');
   var st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 
