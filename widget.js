@@ -204,10 +204,14 @@
         pending.textContent = obj.error === 'rate_limited' ? 'רגע אחד, נסו שוב עוד רגע.' : 'מצטער, אירעה תקלה.';
       }
     }
+    // Source note: read the fleet "note in the pocket" IF present. Snippet 24500 (the VP's,
+    // separate from this file) already saved it on the site page - same localStorage/key/domain.
+    // We ONLY read, never write or overwrite. Absent (e.g. academy until wired) -> omitted, no fall.
+    var src = (typeof window.nadlanSource === 'function') ? window.nadlanSource() : undefined;
     fetch(ENDPOINT, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ public_key: KEY, surface: SURFACE, message: text, conversation_id: conversationId, visitor_id: visitor, stream: true })
+      body: JSON.stringify({ public_key: KEY, surface: SURFACE, message: text, conversation_id: conversationId, visitor_id: visitor, src: src, stream: true })
     }).then(function (r) {
       if (!r.ok || !r.body) throw new Error('bad response');
       var reader = r.body.getReader(), dec = new TextDecoder(), buf = '';
